@@ -1,5 +1,6 @@
 // Password generator api
-// URL: http://localhost/?lower={bool}&upper={bool}&length={int}&numbers={bool}&specialchars={bool}
+
+console.log(`URL: ${'http://localhost/?lower=true&upper=true&numbers=true&specialchars=true&length=12'}`) // Default URL
 
 const express = require('express')
 const app = express()
@@ -12,52 +13,33 @@ function Random(min, max) {
 }
 
 // Characters
-var Numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
 var Lowercase = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
 var Uppercase = []; Lowercase.forEach(element => Uppercase.push(element.toUpperCase()))
 var SpecialChars = ["~","`","!","@","#","$","%","^","&","*","(",")","-","_","+","=","{","}","[","]","|","\\","/",":",";",`"`,"'","<",">",",",".","?"]
 
-function lower() { 
-    return Lowercase[Random(0, 26)]
-}
-function upper() {
-    return Uppercase[Random(0, 26)]
-}
-function numbers() {
-    return Numbers[Random(0, 9)]
-}
-function spec() {
-    return SpecialChars[Random(0, SpecialChars.length)]
-}
-
 // Password generation
 app.get('/', function(req, res) {
-    var Length = parseInt(req.query.length)
-    while (Length != 0) {
-        switch(Random(0,6)) {
-            case 0:
-                if (req.query.lower = 'true') {
-                    res.write(lower(req.query.lower).replace(" ", ""))
-                    Length -= 1}
-                break
-            case 1:
-                if (req.query.upper == 'true') {
-                    res.write(upper().replace(" ", ""))
-                    Length -= 1}
-                break
-            case 2:
-                if (req.query.numbers == 'true') {
-                    res.write(numbers().toString().replace(" ", ""))
-                    Length -= 1}
-                break
-            case 3:
-                if (req.query.specialchars == 'true') {
-                    res.write(spec().toString().replace(" ", ""))
-                    Length -= 1}
-                break
+    var charPool =[]
+    var Password = []
+
+    if (req.query.lower == 'true') {
+        Lowercase.forEach(element => charPool.push(element))
+    }
+    if (req.query.upper == 'true') {
+        charPool.push(Lowercase.forEach(element => Uppercase.push(element.toUpperCase())))
+    }
+    if (req.query.numbers == 'true') {
+        for (var number; number > 9; number++) {
+            charPool.push(number)
         }
     }
-    res.end()
-});
+    if (req.query.specialchars == 'true') {
+        SpecialChars.forEach(element => charPool.push(element))
+    }
 
-app.listen(80)
+    for (let i = 0; i < parseInt(req.query.length); i++) {
+        Password += charPool[Random(0, charPool.length)]
+    }
+    res.end(`Password: ${Password.replace(" ", "")}`)
+
+});app.listen(80)
